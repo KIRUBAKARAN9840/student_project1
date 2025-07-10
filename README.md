@@ -18,6 +18,7 @@ This is a Django-based web application that allows authenticated users to add, v
 
 ![Dashboard Screenshot](demo_screenshot.png) <!-- Replace with your screenshot or remove -->
 ![image alt](https://github.com/KIRUBAKARAN9840/student_project1/blob/7260705abf309898e4a00f146887b5c20dbe1dda/Screenshot%202025-07-10%20084149.png)
+![image alt](https://github.com/KIRUBAKARAN9840/student_project1/blob/9d441cfd88f7ce6af949f08de60a6c82a2369e15/Screenshot%202025-07-10%20084328.png)
 ---
 
 ## 🛠️ Technologies Used
