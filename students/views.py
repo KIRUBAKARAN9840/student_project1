@@ -44,35 +44,37 @@ def get_students(request):
     return JsonResponse([], safe=False)
 
 @csrf_exempt
+@csrf_exempt
+@login_required
 def save_student(request):
-    data = json.loads(request.body)
-    student_id = data.get('id')
-    name = data.get('name').strip()
-    subject = data.get('subject').strip()
-    mark = data.get('mark')
-    user = request.user
+    if request.method == "POST":
+        data = json.loads(request.body)
+        name = data.get("name")
+        subject = data.get("subject")
+        mark = int(data.get("mark"))
+        user = request.user
 
-    # Check for duplicates (exclude current student if editing)
-    duplicate = Student.objects.filter(
-        name=name, subject=subject, user=user
-    )
-    if student_id:
-        duplicate = duplicate.exclude(id=student_id)
-    if duplicate.exists():
-        return JsonResponse({'error': 'Student with same name and subject already exists!'}, status=400)
+        student_id = data.get("id")
 
-    if student_id:
-        # Edit
-        student = Student.objects.get(id=student_id, user=user)
-        student.name = name
-        student.subject = subject
-        student.mark = mark
-        student.save()
-    else:
-        # New
-        Student.objects.create(user=user, name=name, subject=subject, mark=mark)
-
-    return JsonResponse({'message': 'Saved'})
+        if student_id:
+            try:
+                student = Student.objects.get(id=student_id, user=user)
+                student.name = name
+                student.subject = subject
+                student.mark = mark
+                student.save()
+                return JsonResponse({"message": "Updated"})
+            except Student.DoesNotExist:
+                return JsonResponse({"error": "Student not found"}, status=404)
+        else:
+            existing = Student.objects.filter(name=name, subject=subject, user=user).first()
+            if existing:
+                existing.mark += mark
+                existing.save()
+                return JsonResponse({"message": "Mark added to existing record"})
+            else:
+                Student.objects.create(name=name, subject=subject, mark=mark, user=user)
+                return JsonResponse({"message": "Student created"})
 
 @csrf_exempt
 def delete_student(request):
